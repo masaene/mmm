@@ -114,11 +114,14 @@ endfunction
 "note: use if_pyth
 function! mmm#fuzzy#get_files()
 	let s:file_list = []
+	let l:dir_list = split(g:mmm_search_path, ',')
 py3 << EOF
 import glob
-ret = glob.glob('./**/*.c', recursive=True)
-for name in ret:
-	vim.command('call insert(s:file_list, "' + name + '")')
+dir_list = vim.eval('l:dir_list')
+for directory in dir_list:
+	ret = glob.glob(directory + '/**/*.c', recursive=True)
+	for name in ret:
+		vim.command('call insert(s:file_list, "' + name + '")')
 EOF
 endfunction
 
