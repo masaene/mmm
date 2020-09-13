@@ -14,6 +14,8 @@ if !exists('g:mmm_search_extensions')
 endif
 
 let g:mmm_inc_map = "<SPACE><SPACE>"
-execute "nnoremap <silent> ".g:mmm_inc_map." :call mmm#plugin_entry_fuzzy_search()<CR>"
+execute "nnoremap <silent> ".g:mmm_inc_map." :call mmm#plugin_entry()<CR>"
+
+command! -nargs=+ -complete=customlist,mmm#diff#complete_branch GitDiff call mmm#diff#show_diff(<f-args>)
 
 set statusline=%l/%LL\ %F\ %=Git[%{mmm#statusline#find_git_branch()}]
