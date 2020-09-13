@@ -37,5 +37,5 @@ endfunction
 "return: none
 function! mmm#plugin_entry_git_diff()
 	"run GitDiff command and push tab key to start complete
-	call feedkeys(":GitDiff \<Tab>", 't')
+	call feedkeys(":PluginGitDiff \<Tab>", 't')
 endfunction
