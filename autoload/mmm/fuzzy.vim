@@ -65,7 +65,12 @@ function! mmm#fuzzy#decide_input_string(input_string)
 	let l:target_filepath = getline(getcurpos()[1])
 	"back to preview window before start search
 	execute "normal \<c-w>p"
-	execute 'edit ' . l:target_filepath
+	"check exist
+	if filereadable(l:target_filepath)
+		execute 'edit ' . l:target_filepath
+	else
+		echomsg "No such file"
+	endif
 endfunction
 
 "overview: move cursor to next line in searched list
@@ -114,11 +119,24 @@ endfunction
 "note: use if_pyth
 function! mmm#fuzzy#get_files()
 	let s:file_list = []
+	let l:dir_list = split(g:mmm_search_path, ',')
+	let l:ext_list = split(g:mmm_search_extensions, ',')
 py3 << EOF
+import os
+import re
 import glob
-ret = glob.glob('./**/*.c', recursive=True)
-for name in ret:
-	vim.command('call insert(s:file_list, "' + name + '")')
+dir_list = vim.eval('l:dir_list')
+ext_list = vim.eval('l:ext_list')
+
+#convert list to regular expression
+#ex: "c,vim" => "/*\.(c|vim)"
+ext_re = '/*\.(' + '|'.join(ext_list) + ')'
+
+for directory in dir_list:
+	#expand ~ to home directory
+	ret = [p for p in glob.glob(os.path.expanduser(directory) + '/**/*', recursive=True) if re.search(ext_re, str(p))]
+	for name in ret:
+		vim.command('call insert(s:file_list, "' + name + '")')
 EOF
 endfunction
 
