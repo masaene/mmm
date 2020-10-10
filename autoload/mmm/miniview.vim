@@ -16,10 +16,6 @@ function! mmm#miniview#during_input(prompt, feedback_func, decide_func)
 		if 0x0d == l:input_char "push enter key
 			let l:keyloop = 0
 			call a:decide_func(l:input_string)
-		elseif 0x09 == l:input_char "push TAB key, move to next line in list
-			execute "normal j"
-			execute "normal zz"
-			redraw
 		elseif 0x1b == l:input_char "push ESC key
 			let l:keyloop = 0
 		elseif "\<BS>" == l:input_char "delete last character
@@ -27,8 +23,16 @@ function! mmm#miniview#during_input(prompt, feedback_func, decide_func)
 			call a:feedback_func(l:input_string)
 			redraw | echomsg a:prompt . l:input_string
 		else "push any visible character key
-			let l:input_string .= nr2char(l:input_char)
-			call a:feedback_func(l:input_string)
+			if char2nr("\<C-P>") == l:input_char
+				call mmm#miniview#move_upward()
+			elseif char2nr("\<C-N>") == l:input_char
+				call mmm#miniview#move_downward()
+			elseif char2nr("\<Tab>") == l:input_char "push TAB key, move to next line in list
+				call mmm#miniview#move_downward()
+			else
+				let l:input_string .= nr2char(l:input_char)
+				call a:feedback_func(l:input_string)
+			endif
 			redraw | echomsg a:prompt . l:input_string
 		endif
 	endwhile
@@ -62,3 +66,14 @@ function mmm#miniview#adjust_height(match_num)
 	endif
 endfunction
 
+function mmm#miniview#move_upward()
+	execute "normal k"
+	execute "normal zz"
+	redraw
+endfunction
+
+function mmm#miniview#move_downward()
+	execute "normal j"
+	execute "normal zz"
+	redraw
+endfunction

@@ -13,7 +13,7 @@ function! mmm#search#feedback_input_string(input_string)
 		let l:matched_list = []
 		let l:line_no = 1
 		for v in getbufline(g:mmm_pre_buf_no,1,"$")
-			if v =~ a:input_string
+			if v =~? a:input_string
 				call add(l:matched_list, {"no":l:line_no,"line":v})
 			endif
 			let l:line_no += 1
