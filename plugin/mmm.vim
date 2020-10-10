@@ -13,9 +13,12 @@ if !exists('g:mmm_search_extensions')
 	let g:mmm_search_extensions = "c,vim"
 endif
 
-let g:mmm_inc_map = "<SPACE><SPACE>"
+"let g:mmm_inc_map = "<SPACE><SPACE>"
+let g:mmm_inc_map = "<c-p>"
+
 execute "nnoremap <silent> ".g:mmm_inc_map." :call mmm#plugin_entry()<CR>"
 
 command! -nargs=+ -complete=customlist,mmm#diff#complete_branch PluginGitDiff call mmm#diff#show_diff(<f-args>)
+command! -range Inc <line1>,<line2>call mmm#cmd#inc(<f-args>)
 
 set statusline=%l/%LL\ %F\ %=Git[%{mmm#statusline#find_git_branch()}]
