@@ -41,7 +41,7 @@ function! mmm#fuzzy#feedback_input_string(input_string)
 				call mmm#miniview#adjust_height(len(l:matched_list))
 				let l:line_idx = 1
 				for v in l:matched_list
-					call setline(l:line_idx, l:v)
+					call setbufline(bufnr(g:mmm_buf_name), l:line_idx, l:v)
 					let l:line_idx = l:line_idx + 1
 				endfor
 				call mmm#miniview#update_hit_keyword_color(a:input_string)

@@ -1,6 +1,5 @@
 scriptencoding utf-8
 
-let s:mmm_buf_name = "mmm_win"
 let g:mmm_pre_buf_no = 0
 
 "overview: main loop while user is inputting any character
@@ -32,9 +31,10 @@ function! mmm#miniview#during_input(prompt, feedback_func, decide_func)
 				call mmm#miniview#move_upward()
 			elseif char2nr("\<C-N>") == l:input_char
 				call mmm#miniview#move_downward()
-			elseif char2nr("\<Tab>") == l:input_char "push TAB key, move to next line in list
+			elseif char2nr("\<Tab>") == l:input_char
 				call mmm#miniview#move_downward()
 			else
+				"update input_string
 				let l:input_string .= nr2char(l:input_char)
 				call a:feedback_func(l:input_string)
 				call mmm#miniview#update_selected_line_color()
@@ -48,8 +48,10 @@ endfunction
 "arguments: msg : error message
 "return: none
 function mmm#miniview#err_msg(msg)
-	call setline(1,a:msg)
-	execute 'match Error /.*/'
+	if bufexists(g:mmm_buf_name)
+		call setbufline(bufnr(g:mmm_buf_name),1,a:msg)
+		execute 'match Error /.*/'
+	endif
 endfunction
 
 "overview: change string color of hitted string
@@ -89,7 +91,7 @@ endfunction
 function mmm#miniview#open_miniview(initial_view_func)
 	let g:mmm_pre_buf_no = bufnr("%")
 	"new buffer for show found file
-	execute 'keepalt botright ' . 'new '.s:mmm_buf_name
+	execute 'keepalt botright ' . 'new '.g:mmm_buf_name
 	setl cursorline
 	call mmm#miniview#adjust_height(0)
 	call a:initial_view_func()
@@ -97,7 +99,7 @@ function mmm#miniview#open_miniview(initial_view_func)
 endfunction
 
 function mmm#miniview#close_miniview()
-	execute 'bdelete!' s:mmm_buf_name
+	execute 'bdelete!' g:mmm_buf_name
 	echomsg ""
 	redraw
 endfunction

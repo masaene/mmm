@@ -1,7 +1,5 @@
 scriptencoding utf-8
 
-let s:mmm_buf_name = "mmm_win"
-
 "overview: 
 "arguments: none
 "return: none

@@ -1,5 +1,6 @@
 scriptencoding utf-8
 
+let g:mmm_buf_name = "mmm_win"
 let g:mmm_miniview_max_height = 10
 
 function! mmm#plugin_entry()
