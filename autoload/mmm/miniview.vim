@@ -1,5 +1,8 @@
 scriptencoding utf-8
 
+let s:mmm_buf_name = "mmm_win"
+let g:mmm_pre_buf_no = 0
+
 "overview: main loop while user is inputting any character
 "arguments: none
 "detail: show result what searched for every hit any key
@@ -15,12 +18,14 @@ function! mmm#miniview#during_input(prompt, feedback_func, decide_func)
 		let l:input_char = getchar()
 		if 0x0d == l:input_char "push enter key
 			let l:keyloop = 0
-			call a:decide_func(l:input_string)
+			"call a:decide_func(l:input_string)
+			call a:decide_func(getline(getcurpos()[1]))
 		elseif 0x1b == l:input_char "push ESC key
 			let l:keyloop = 0
 		elseif "\<BS>" == l:input_char "delete last character
 			let l:input_string = substitute(l:input_string, ".$", "", "")
 			call a:feedback_func(l:input_string)
+			call mmm#miniview#update_selected_line_color()
 			redraw | echomsg a:prompt . l:input_string
 		else "push any visible character key
 			if char2nr("\<C-P>") == l:input_char
@@ -32,6 +37,7 @@ function! mmm#miniview#during_input(prompt, feedback_func, decide_func)
 			else
 				let l:input_string .= nr2char(l:input_char)
 				call a:feedback_func(l:input_string)
+				call mmm#miniview#update_selected_line_color()
 			endif
 			redraw | echomsg a:prompt . l:input_string
 		endif
@@ -50,7 +56,7 @@ endfunction
 "arguments: input_string : target string
 "result: none
 function! mmm#miniview#update_hit_keyword_color(input_string)
-	execute 'match SignColumn /'. escape(a:input_string,'/') .'\c/'
+	execute 'match mmmHitLine /'. escape(a:input_string,'/') . '\c/'
 endfunction
 
 "overview: adjust mmm buffer height
@@ -59,10 +65,10 @@ endfunction
 function mmm#miniview#adjust_height(match_num)
 	if a:match_num == 0
 		execute 'resize 1'
-	elseif a:match_num < 10
-		execute 'resize '.a:match_num
+	elseif a:match_num < g:mmm_miniview_max_height
+		execute 'resize ' . a:match_num
 	else
-		execute 'resize 10'
+		execute 'resize ' . g:mmm_miniview_max_height
 	endif
 endfunction
 
@@ -70,10 +76,39 @@ function mmm#miniview#move_upward()
 	execute "normal k"
 	execute "normal zz"
 	redraw
+	call mmm#miniview#update_selected_line_color()
 endfunction
 
 function mmm#miniview#move_downward()
 	execute "normal j"
 	execute "normal zz"
 	redraw
+	call mmm#miniview#update_selected_line_color()
 endfunction
+
+function mmm#miniview#open_miniview(initial_view_func)
+	let g:mmm_pre_buf_no = bufnr("%")
+	"new buffer for show found file
+	execute 'keepalt botright ' . 'new '.s:mmm_buf_name
+	setl cursorline
+	call mmm#miniview#adjust_height(0)
+	call a:initial_view_func()
+	call mmm#miniview#update_selected_line_color()
+endfunction
+
+function mmm#miniview#close_miniview()
+	execute 'bdelete!' s:mmm_buf_name
+	echomsg ""
+	redraw
+endfunction
+
+let s:mmm_sign_id = 1
+let s:mmm_sign_mark = '**'
+function mmm#miniview#update_selected_line_color()
+	let l:crt_line = getcurpos()[1]
+	execute '2match mmmSelectLine /.*\%' . l:crt_line . 'l/'
+	return
+endfunction
+
+
+

@@ -35,9 +35,10 @@ function! mmm#search#feedback_input_string(input_string)
 	endif
 endfunction
 
-function! mmm#search#decide_input_string(input_string)
+function! mmm#search#decide_input_string(decide_string)
 	"return filepath on current cursor line from searched buffer
-	let l:line_info = getline(getcurpos()[1])
+	"let l:line_info = getline(getcurpos()[1])
+	let l:line_info = a:decide_string
 	let l:no = trim(split(l:line_info, ":")[0])
 	"back to preview window before start search
 	execute "normal \<c-w>p"
@@ -45,3 +46,6 @@ function! mmm#search#decide_input_string(input_string)
 	execute "normal zz"
 endfunction
 
+function! mmm#search#initial_view()
+
+endfunction

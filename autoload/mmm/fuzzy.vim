@@ -16,7 +16,7 @@ import vim
 filelist = vim.eval('a:filelist')
 keyword = vim.eval('a:keyword')
 for v in filelist:
-	if re.search(keyword, v):
+	if re.search(keyword, v, re.IGNORECASE):
 		vim.command('call insert(s:matched_list, "' + v + '")')
 EOF
 	return s:matched_list
@@ -58,16 +58,17 @@ function! mmm#fuzzy#feedback_input_string(input_string)
 	endif
 endfunction
 
-function! mmm#fuzzy#decide_input_string(input_string)
+function! mmm#fuzzy#decide_input_string(decide_string)
 	"return filepath on current cursor line from searched buffer
-	let l:target_filepath = getline(getcurpos()[1])
+	"let l:target_filepath = getline(getcurpos()[1])
+	let l:target_filepath = expand(a:decide_string)
 	"back to preview window before start search
-	execute "normal \<c-w>p"
 	"check exist
 	if filereadable(l:target_filepath)
+		execute "normal \<c-w>p"
 		execute 'edit ' . l:target_filepath
 	else
-		echomsg "No such file"
+		call mmm#miniview#err_msg("No such file")
 	endif
 endfunction
 
@@ -98,3 +99,17 @@ for directory in dir_list:
 EOF
 endfunction
 
+function! mmm#fuzzy#initial_view()
+	let l:line_idx = 1
+	for v in v:oldfiles
+		let l:filename = l:v
+		if filereadable(expand(l:filename))
+			call setline(l:line_idx, l:filename)
+			if l:line_idx >= g:mmm_miniview_max_height
+				break
+			endif
+			let l:line_idx = l:line_idx + 1
+		endif
+	endfor
+	call mmm#miniview#adjust_height(l:line_idx)
+endfunction

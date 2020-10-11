@@ -22,3 +22,6 @@ command! -nargs=+ -complete=customlist,mmm#diff#complete_branch PluginGitDiff ca
 command! -range Inc <line1>,<line2>call mmm#cmd#inc(<f-args>)
 
 set statusline=%l/%LL\ %F\ %=Git[%{mmm#statusline#find_git_branch()}]
+
+highlight mmmHitLine term=standout ctermfg=118 ctermbg=235 guifg=#A6E22E guibg=#232526
+highlight mmmSelectLine term=standout,underline ctermfg=70 ctermbg=16 guifg=#465457 guibg=#000000
