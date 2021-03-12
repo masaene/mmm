@@ -10,6 +10,8 @@ let s:was_searched = 0
 "note: use if_pyth
 function! mmm#fuzzy#filter_with_keyword(filelist, keyword)
 	let s:matched_list = []
+
+	if g:mmm_use_pyth == 1 "with pyth
 py3 << EOF
 import re
 import vim
@@ -19,6 +21,13 @@ for v in filelist:
 	if re.search(keyword, v, re.IGNORECASE):
 		vim.command('call insert(s:matched_list, "' + v + '")')
 EOF
+	else "without pyth
+		for v in a:filelist
+			if v =~ a:keyword
+				call add(s:matched_list, v)
+			endif
+		endfor
+	endif
 	return s:matched_list
 endfunction
 
@@ -80,6 +89,8 @@ function! mmm#fuzzy#get_files()
 	let s:file_list = []
 	let l:dir_list = split(g:mmm_search_path, ',')
 	let l:ext_list = split(g:mmm_search_extensions, ',')
+
+	if g:mmm_use_pyth == 1 "with pyth
 py3 << EOF
 import os
 import re
@@ -97,6 +108,16 @@ for directory in dir_list:
 	for name in ret:
 		vim.command('call insert(s:file_list, "' + name + '")')
 EOF
+	else "without pyth
+		for v_dir in l:dir_list
+			let l:tmp_list = glob(v_dir . "/**/*", v:true, v:true)
+			for v_ext in l:ext_list
+				let l:regex = "v:val =~ '" . v_ext . "'"
+				let l:filtered = filter(copy(l:tmp_list), "v:val =~ '" . v_ext . "$'")
+				let s:file_list += l:filtered
+			endfor
+		endfor
+	endif
 endfunction
 
 function! mmm#fuzzy#initial_view()
