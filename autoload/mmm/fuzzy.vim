@@ -114,12 +114,16 @@ EOF
 			for v_ext in l:ext_list
 				let l:regex = "v:val =~ '" . v_ext . "'"
 				let l:filtered = filter(copy(l:tmp_list), "v:val =~ '" . v_ext . "$'")
-				let s:file_list += l:filtered
+				let s:file_list += l:filtered "join list
 			endfor
 		endfor
 	endif
 endfunction
 
+"overview: show file lists at first
+"          files searched by keyword are not shown, recently used files will be shown.
+"arguments: none
+"return: none
 function! mmm#fuzzy#initial_view()
 	let l:line_idx = 1
 	for v in v:oldfiles
