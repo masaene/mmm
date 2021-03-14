@@ -1,6 +1,8 @@
 scriptencoding utf-8
 
+"set preivous buffer no where is before open the miniview
 let g:mmm_pre_buf_no = 0
+let g:mmm_pre_buf_name = 0
 
 "overview: main loop while user is inputting any character
 "arguments: none
@@ -61,6 +63,14 @@ function! mmm#miniview#update_hit_keyword_color(input_string)
 	execute 'match mmmHitLine /'. escape(a:input_string,'/') . '\c/'
 endfunction
 
+"overview: clear string color of hitted string
+"arguments: : target string
+"result: none
+"note: using when temporary showing miniview, but you don't want these string to change color
+function! mmm#miniview#clear_hit_keyword_color()
+	execute 'match none'
+endfunction
+
 "overview: adjust mmm buffer height
 "arguments: match_num : matched number
 "result: none
@@ -90,9 +100,12 @@ endfunction
 
 function mmm#miniview#open_miniview(initial_view_func)
 	let g:mmm_pre_buf_no = bufnr("%")
+	let g:mmm_pre_buf_name = expand("%")
 	"new buffer for show found file
 	execute 'keepalt botright ' . 'new '.g:mmm_buf_name
 	setl cursorline
+	setl nonumber
+	setl norelativenumber
 	call mmm#miniview#adjust_height(0)
 	call a:initial_view_func()
 	call mmm#miniview#update_selected_line_color()
