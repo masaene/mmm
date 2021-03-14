@@ -3,6 +3,7 @@ scriptencoding utf-8
 "set preivous buffer no where is before open the miniview
 let g:mmm_pre_buf_no = 0
 let g:mmm_pre_buf_name = 0
+let g:mmm_pre_buf_word_on_cursor = 0
 
 "overview: main loop while user is inputting any character
 "arguments: none
@@ -101,6 +102,7 @@ endfunction
 function mmm#miniview#open_miniview(initial_view_func)
 	let g:mmm_pre_buf_no = bufnr("%")
 	let g:mmm_pre_buf_name = expand("%")
+	let g:mmm_pre_buf_word_on_cursor = expand("<cword>")
 	"new buffer for show found file
 	execute 'keepalt botright ' . 'new '.g:mmm_buf_name
 	setl cursorline

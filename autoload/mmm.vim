@@ -15,7 +15,7 @@ function! mmm#plugin_entry()
 	execute "highlight mmmSymbol ctermfg=DarkGreen"
 	echohl mmmFuzzy | echo "fuzzy:<f>"
 	echohl mmmDiff | echo "diff:<d>"
-	echohl mmmSearch | echo "search:<s>"
+	echohl mmmSearch | echo "search:</>"
 	echohl mmmSymbol | echo "symbol:<b>"
 	echohl None
 
@@ -24,7 +24,7 @@ function! mmm#plugin_entry()
 		let l:mode_num = 1
 	elseif l:mode_char == 'd'
 		let l:mode_num = 2
-	elseif l:mode_char == 's'
+	elseif l:mode_char == '/'
 		let l:mode_num = 3
 	elseif l:mode_char == 'b'
 		let l:mode_num = 4
@@ -49,6 +49,7 @@ function! mmm#plugin_entry()
 	else
 		"do nothing
 	endif
+	redraw "prevent 'Press ENTER or ...' message appear
 endfunction
 
 "overview: fuzzy search main function
