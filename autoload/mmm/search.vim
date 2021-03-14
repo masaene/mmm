@@ -1,5 +1,7 @@
 scriptencoding utf-8
 
+"overview: search current file, and result lists will appear in miniview.
+
 let s:file_list = []
 let s:was_searched = 0
 
@@ -18,7 +20,8 @@ function! mmm#search#feedback_input_string(input_string)
 			endif
 			let l:line_no += 1
 		endfor
-		if len(l:matched_list) != 0 "hit any file
+
+		if len(l:matched_list) != 0 "there are some string
 			call mmm#miniview#adjust_height(len(l:matched_list))
 			let l:line_idx = 1
 			for v in l:matched_list
@@ -39,9 +42,13 @@ function! mmm#search#decide_input_string(decide_string)
 	"return filepath on current cursor line from searched buffer
 	"let l:line_info = getline(getcurpos()[1])
 	let l:line_info = a:decide_string
+
+	"a:decide_string example = '    120:  func()'
+	"acquire line number
 	let l:no = trim(split(l:line_info, ":")[0])
 	"back to preview window before start search
 	execute "normal \<c-w>p"
+	"exec line number, cursor will move to indicated line number
 	execute l:no
 	execute "normal zz"
 endfunction
