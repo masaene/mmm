@@ -41,16 +41,18 @@ endfunction
 function! mmm#search#decide_input_string(decide_string)
 	"return filepath on current cursor line from searched buffer
 	"let l:line_info = getline(getcurpos()[1])
-	let l:line_info = a:decide_string
+	if a:decide_string != ""
+		let l:line_info = a:decide_string
 
-	"a:decide_string example = '    120:  func()'
-	"acquire line number
-	let l:no = trim(split(l:line_info, ":")[0])
-	"back to preview window before start search
-	execute "normal \<c-w>p"
-	"exec line number, cursor will move to indicated line number
-	execute l:no
-	execute "normal zz"
+		"a:decide_string example = '    120:  func()'
+		"acquire line number
+		let l:no = trim(split(l:line_info, ":")[0])
+		"back to preview window before start search
+		execute "normal \<c-w>p"
+		"exec line number, cursor will move to indicated line number
+		execute l:no
+		execute "normal zz"
+	endif
 endfunction
 
 function! mmm#search#initial_view()

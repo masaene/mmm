@@ -45,16 +45,19 @@ endfunction
 function! mmm#symbol#decide_input_string(decide_string)
 	execute "normal \<c-w>p"
 
-	let l:jump_number = s:all_definition_dict[a:decide_string]["jump"]
-	if l:jump_number != 0
-		execute l:jump_number
-	else
-		let l:search_word = s:all_definition_dict[a:decide_string]["search"]
-		execute l:search_word
-		execute "noh"
-	endif
+	if has_key(s:all_definition_dict, a:decide_string)
 
-	execute "normal zz"
+		let l:jump_number = s:all_definition_dict[a:decide_string]["jump"]
+		if l:jump_number != 0
+			execute l:jump_number
+		else
+			let l:search_word = s:all_definition_dict[a:decide_string]["search"]
+			execute l:search_word
+			execute "noh"
+		endif
+
+		execute "normal zz"
+	endif
 endfunction
 
 function! mmm#symbol#initial_view()
