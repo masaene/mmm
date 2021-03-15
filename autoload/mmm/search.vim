@@ -57,6 +57,5 @@ endfunction
 
 function! mmm#search#initial_view()
 	call mmm#search#feedback_input_string(g:mmm_pre_buf_word_on_cursor)
-	call mmm#miniview#clear_hit_keyword_color()
 
 endfunction
