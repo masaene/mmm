@@ -70,6 +70,7 @@ endfunction
 "note: using when temporary showing miniview, but you don't want these string to change color
 function! mmm#miniview#clear_hit_keyword_color()
 	execute 'match none'
+	call clearmatches()
 endfunction
 
 "overview: adjust mmm buffer height

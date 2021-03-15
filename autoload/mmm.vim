@@ -13,10 +13,12 @@ function! mmm#plugin_entry()
 	execute "highlight mmmDiff ctermfg=LightBlue"
 	execute "highlight mmmSearch ctermfg=LightYellow"
 	execute "highlight mmmSymbol ctermfg=DarkGreen"
+	execute "highlight mmmGrep ctermfg=Gray"
 	echohl mmmFuzzy | echo "fuzzy:<f>"
 	echohl mmmDiff | echo "diff:<d>"
 	echohl mmmSearch | echo "search:</>"
 	echohl mmmSymbol | echo "symbol:<b>"
+	echohl mmmGrep | echo "grep:<g>"
 	echohl None
 
 	let l:mode_char = nr2char(getchar())
@@ -28,6 +30,8 @@ function! mmm#plugin_entry()
 		let l:mode_num = 3
 	elseif l:mode_char == 'b'
 		let l:mode_num = 4
+	elseif l:mode_char == 'g'
+		let l:mode_num = 5
 	else
 		let l:mode_num = 0
 	endif
@@ -46,6 +50,8 @@ function! mmm#plugin_entry()
 		call mmm#plugin_entry_search_in_file()
 	elseif l:mode_num == 4 "symbol
 		call mmm#plugin_entry_symbol_in_file()
+	elseif l:mode_num == 5 "grep
+		call mmm#plugin_entry_grep_in_dir()
 	else
 		"do nothing
 	endif
@@ -103,3 +109,15 @@ function! mmm#plugin_entry_symbol_in_file()
 	call mmm#miniview#during_input('mmm:>', s:feedback_func, s:decide_func)
 	call mmm#miniview#close_miniview()
 endfunction
+
+function! mmm#plugin_entry_grep_in_dir()
+	execute "highlight mmmGrepFilename ctermfg=Cyan"
+	execute "highlight mmmGrepLInenumber ctermfg=Yellow"
+
+	call mmm#miniview#open_miniview(function("mmm#grep#initial_view"))
+	let s:feedback_func = function("mmm#grep#feedback_input_string")
+	let s:decide_func = function("mmm#grep#decide_input_string")
+	call mmm#miniview#during_input('mmm:>', s:feedback_func, s:decide_func)
+	call mmm#miniview#close_miniview()
+endfunction
+
